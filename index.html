@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L1nar — Server Tech, Modder & 3D Artist</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0c10;
+  --fg: #c8dff0;
+  --accent: #ff7043;
+  --blue: #4a9fd4;
+  --dim: rgba(200, 223, 240, 0.5);
+  --border: rgba(74, 159, 212, 0.15);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(0deg, rgba(74,159,212,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,159,212,0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+section, header, footer { position: relative; z-index: 1; }
+
+/* header */
+header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  padding: 1.2rem 2rem;
+  background: rgba(10, 12, 16, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
+
+.logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--blue);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+nav {
+  display: flex;
+  gap: 2rem;
+}
+
+nav a {
+  font-size: 0.85rem;
+  color: var(--dim);
+  text-decoration: none;
+  transition: color 0.2s;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 0.2rem;
+}
+
+nav a:hover {
+  color: var(--fg);
+  border-bottom-color: var(--accent);
+}
+
+/* lang switcher */
+.lang-switch {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  padding: 0.4em 0.9em;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.lang-switch:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* hero */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.hero-content h1 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+.hero-content p {
+  font-size: 1.1rem;
+  color: var(--dim);
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.7em 1.8em;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg);
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 2px;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 10px rgba(255, 112, 67, 0.1);
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, var(--accent), rgba(255,112,67,0.7));
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn.primary:hover {
+  box-shadow: 0 0 20px rgba(255, 112, 67, 0.3);
+}
+
+/* sections */
+.section {
+  padding: 4rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.section-title::before {
+  content: '// ';
+  color: var(--blue);
+}
+
+/* about */
+.about-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+.about-text p {
+  margin-bottom: 1rem;
+  color: var(--dim);
+}
+
+.about-text strong { color: var(--fg); }
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stat {
+  border-left: 2px solid var(--accent);
+  padding: 1rem 1rem 1rem 1.5rem;
+  background: rgba(74, 159, 212, 0.05);
+}
+
+.stat-num {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--dim);
+  margin-top: 0.3rem;
+}
+
+/* projects */
+.project-card {
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background: rgba(10, 12, 16, 0.5);
+  border-left: 3px solid var(--accent);
+  transition: all 0.2s;
+}
+
+.project-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(255, 112, 67, 0.1);
+}
+
+.project-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.project-desc {
+  color: var(--dim);
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  font-size: 0.75rem;
+  border: 1px solid var(--border);
+  padding: 0.3em 0.7em;
+  background: rgba(74, 159, 212, 0.1);
+  color: var(--dim);
+  border-radius: 2px;
+}
+
+.project-link {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.5em 1em;
+  border: 1px solid var(--blue);
+  color: var(--blue);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.project-link:hover { background: rgba(74, 159, 212, 0.2); }
+
+.render-img {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  max-width: 100%;
+}
+
+.render-img img {
+  width: 100%;
+  display: block;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.render-img:hover img { opacity: 1; }
+
+/* skills */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.skill-group {
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  background: rgba(74, 159, 212, 0.03);
+}
+
+.skill-group-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--blue);
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-item {
+  font-size: 0.85rem;
+  padding: 0.3em 0.8em;
+  border: 1px solid var(--border);
+  background: rgba(74, 159, 212, 0.1);
+  border-radius: 2px;
+}
+
+/* interests */
+.interests-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.interest-card {
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  text-align: center;
+  background: rgba(10, 12, 16, 0.5);
+  transition: all 0.2s;
+}
+
+.interest-card:hover { border-color: var(--accent); }
+
+.interest-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+
+.interest-name {
+  font-size: 0.95rem;
+  color: var(--fg);
+  margin-bottom: 0.3rem;
+}
+
+.interest-desc {
+  font-size: 0.8rem;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+/* contact */
+#contact { text-align: center; }
+
+.contact-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.contact-link {
+  padding: 0.8em 1.5em;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  border-radius: 2px;
+}
+
+.contact-link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+footer {
+  padding: 2rem;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  color: var(--dim);
+  font-size: 0.8rem;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  header { padding: 1rem 1.5rem; }
+  nav { gap: 1rem; }
+  .about-content { grid-template-columns: 1fr; gap: 2rem; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .interests-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 600px) {
+  nav { display: none; }
+  .interests-grid { grid-template-columns: 1fr; }
+  .btn-group { flex-direction: column; }
+  .btn { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">L1nar</div>
+  <div class="header-right">
+    <nav>
+      <a href="#about"    data-ru="Обо мне"   data-en="About">Обо мне</a>
+      <a href="#projects" data-ru="Проекты"   data-en="Projects">Проекты</a>
+      <a href="#skills"   data-ru="Навыки"    data-en="Skills">Навыки</a>
+      <a href="#interests"data-ru="Интересы"  data-en="Interests">Интересы</a>
+      <a href="#contact"  data-ru="Контакты"  data-en="Contact">Контакты</a>
+    </nav>
+    <button class="lang-switch" onclick="toggleLang()" id="langBtn">EN</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-content">
+    <h1>Линар</h1>
+    <p data-ru="Тех-Админ · Моддер · 3D Художник · Кодер"
+       data-en="Server Tech · Modder · 3D Artist · Coder">
+      Тех-Админ · Моддер · 3D Художник · Кодер
+    </p>
+    <div class="btn-group">
+      <a href="#projects" class="btn primary"
+         data-ru="Проекты" data-en="Projects">Проекты</a>
+      <a href="#contact" class="btn"
+         data-ru="Контакты" data-en="Contact">Контакты</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<div class="section" id="about">
+  <h2 class="section-title" data-ru="Обо мне" data-en="About">Обо мне</h2>
+  <div class="about-content">
+    <div class="about-text">
+      <p data-ru="Занимаюсь <strong>архитектурой игровых серверов</strong>, оптимизацией систем, <strong>разработкой модов</strong> и <strong>3D-анимацией</strong>. Каждый проект — инженерное решение."
+         data-en="Deep into <strong>game server architecture</strong>, systems optimization, <strong>mod development</strong>, and <strong>3D animation</strong>. Every project is an engineering solution.">
+        Занимаюсь <strong>архитектурой игровых серверов</strong>, оптимизацией систем, <strong>разработкой модов</strong> и <strong>3D-анимацией</strong>. Каждый проект — инженерное решение.
+      </p>
+      <p data-ru="Увлекаюсь сложным игровым лором — Frostpunk, Portal 2, Danganronpa. Планирую профессионально развиваться в сфере <strong>кулинарного искусства</strong>."
+         data-en="Hooked on complex game lore — Frostpunk, Portal 2, Danganronpa. Planning to pursue professional development in <strong>culinary arts</strong>.">
+        Увлекаюсь сложным игровым лором — Frostpunk, Portal 2, Danganronpa. Планирую профессионально развиваться в сфере <strong>кулинарного искусства</strong>.
+      </p>
+      <p data-ru="Всё техническое — моё. Серверы, плагины, рендеры, системы. Сломано — починю. Нет — построю с нуля."
+         data-en="Everything technical is mine. Servers, plugins, renders, systems. If it's broken — I fix it. If not — I build it from scratch.">
+        Всё техническое — моё. Серверы, плагины, рендеры, системы. Сломано — починю. Нет — построю с нуля.
+      </p>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">3+</div>
+        <div class="stat-label"
+             data-ru="Завершённых сезона DMS STAR"
+             data-en="DMS STAR seasons completed">
+          Завершённых сезона DMS STAR
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label"
+             data-ru="Часов в Termux и консолях"
+             data-en="Hours in Termux & consoles">
+          Часов в Termux и консолях
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3D</div>
+        <div class="stat-label">Blender · Blockbench · Prisma3D</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<div class="section" id="projects">
+  <h2 class="section-title" data-ru="Проекты" data-en="Projects">Проекты</h2>
+
+  <div class="project-card">
+    <div class="project-title">Frostpunk Generator Mod</div>
+    <div class="project-desc"
+         data-ru="Мод, добавляющий культовый генератор из Frostpunk в Minecraft. Главный активный проект прямо сейчас — воссоздаю атмосферу и механики генератора максимально точно."
+         data-en="A mod bringing the iconic Frostpunk generator into Minecraft. Main active project right now — recreating the atmosphere and mechanics of the generator as faithfully as possible.">
+      Мод, добавляющий культовый генератор из Frostpunk в Minecraft. Главный активный проект прямо сейчас — воссоздаю атмосферу и механики генератора максимально точно.
+    </div>
+    <div class="project-tags">
+      <span class="tag">Java</span>
+      <span class="tag">Modding</span>
+      <span class="tag">Minecraft</span>
+      <span class="tag">Frostpunk</span>
+    </div>
+  </div>
+
+  <div class="project-card">
+    <div class="project-title">DMS STAR</div>
+    <div class="project-desc"
+         data-ru="Флагманский игровой проект с полной технической инфраструктурой. Отвечаю за архитектуру серверов, разработку плагинов и уникальные механики. Три завершённых сезона, каждый сложнее предыдущего."
+         data-en="Flagship game server project with complete technical infrastructure. Responsible for server architecture, plugin development, and unique mechanics. Three completed seasons, each more complex than the last.">
+      Флагманский игровой проект с полной технической инфраструктурой. Отвечаю за архитектуру серверов, разработку плагинов и уникальные механики. Три завершённых сезона, каждый сложнее предыдущего.
+    </div>
+    <div class="project-tags">
+      <span class="tag">Paper</span>
+      <span class="tag">Velocity</span>
+      <span class="tag">Geyser</span>
+      <span class="tag">LuckPerms</span>
+      <span class="tag">Java</span>
+      <span class="tag">Skript</span>
+    </div>
+    <a href="https://t.me/ArchiRed312" target="_blank" class="project-link"
+       data-ru="→ Telegram-канал" data-en="→ Telegram Channel">→ Telegram-канал</a>
+  </div>
+
+  <div class="project-card">
+    <div class="project-title">3D Art</div>
+    <div class="project-desc"
+         data-ru="Низкополигональные и детализированные 3D-модели. Атмосферные сцены с кинематографическим освещением и выраженным стилем."
+         data-en="Low-poly and detailed 3D models. Atmospheric scenes with cinematic lighting and distinctive style.">
+      Низкополигональные и детализированные 3D-модели. Атмосферные сцены с кинематографическим освещением и выраженным стилем.
+    </div>
+    <div class="render-img">
+      <img src="render.jpg" alt="3D Render">
+    </div>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<div class="section" id="skills">
+  <h2 class="section-title" data-ru="Навыки" data-en="Skills">Навыки</h2>
+  <div class="skills-grid">
+    <div class="skill-group">
+      <div class="skill-group-title"
+           data-ru="Backend / Скриптинг"
+           data-en="Backend / Scripting">Backend / Скриптинг</div>
+      <div class="skills-list">
+        <span class="skill-item">Java</span>
+        <span class="skill-item">JavaScript</span>
+        <span class="skill-item">Skript</span>
+        <span class="skill-item">Modding</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title"
+           data-ru="Управление серверами"
+           data-en="Server Management">Управление серверами</div>
+      <div class="skills-list">
+        <span class="skill-item">Paper</span>
+        <span class="skill-item">Velocity</span>
+        <span class="skill-item">Geyser</span>
+        <span class="skill-item">LuckPerms</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title"
+           data-ru="Инструменты"
+           data-en="Tools">Инструменты</div>
+      <div class="skills-list">
+        <span class="skill-item">Termux</span>
+        <span class="skill-item">ADB</span>
+        <span class="skill-item">SSH</span>
+        <span class="skill-item">Firebase</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title"
+           data-ru="3D Программы"
+           data-en="3D Software">3D Программы</div>
+      <div class="skills-list">
+        <span class="skill-item">Blender</span>
+        <span class="skill-item">Blockbench</span>
+        <span class="skill-item">Prisma3D</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INTERESTS -->
+<div class="section" id="interests">
+  <h2 class="section-title" data-ru="Интересы" data-en="Interests">Интересы</h2>
+  <div class="interests-grid">
+    <div class="interest-card">
+      <div class="interest-icon">🏭</div>
+      <div class="interest-name">Frostpunk</div>
+      <div class="interest-desc"
+           data-ru="Промышленный сурвайвал со сложным нарративом"
+           data-en="Industrial survival with complex narrative">
+        Промышленный сурвайвал со сложным нарративом
+      </div>
+    </div>
+    <div class="interest-card">
+      <div class="interest-icon">🌀</div>
+      <div class="interest-name">Portal 2</div>
+      <div class="interest-desc"
+           data-ru="Портальная механика и культовый сторителлинг"
+           data-en="Portal mechanics and iconic storytelling">
+        Портальная механика и культовый сторителлинг
+      </div>
+    </div>
+    <div class="interest-card">
+      <div class="interest-icon">⚖️</div>
+      <div class="interest-name">Danganronpa</div>
+      <div class="interest-desc"
+           data-ru="Детективный лор с неожиданными твистами"
+           data-en="Detective lore with plot twists">
+        Детективный лор с неожиданными твистами
+      </div>
+    </div>
+    <div class="interest-card">
+      <div class="interest-icon">🍳</div>
+      <div class="interest-name" data-ru="Кулинария" data-en="Culinary Arts">Кулинария</div>
+      <div class="interest-desc"
+           data-ru="Планирую профессионально развиваться в этом направлении"
+           data-en="Professional development direction">
+        Планирую профессионально развиваться в этом направлении
+      </div>
+    </div>
+    <div class="interest-card">
+      <div class="interest-icon">🖥️</div>
+      <div class="interest-name">Server Admin</div>
+      <div class="interest-desc"
+           data-ru="Архитектура и оптимизация"
+           data-en="Architecture and optimization">
+        Архитектура и оптимизация
+      </div>
+    </div>
+    <div class="interest-card">
+      <div class="interest-icon">🎨</div>
+      <div class="interest-name">3D Art</div>
+      <div class="interest-desc"
+           data-ru="Низкополигональный стиль, атмосферное освещение"
+           data-en="Low-poly style, atmospheric lighting">
+        Низкополигональный стиль, атмосферное освещение
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="section" id="contact">
+  <h2 class="section-title" data-ru="Контакты" data-en="Contact">Контакты</h2>
+  <p style="color: var(--dim); margin-bottom: 1rem;"
+     data-ru="Есть вопрос или идея проекта? Пишите."
+     data-en="Questions or project ideas? Reach out.">
+    Есть вопрос или идея проекта? Пишите.
+  </p>
+  <div class="contact-links">
+    <a href="https://t.me/DevMagicans" target="_blank" class="contact-link">Telegram</a>
+    <a href="https://discord.com/users/devmagicans" target="_blank" class="contact-link">Discord</a>
+    <a href="https://t.me/ArchiRed312" target="_blank" class="contact-link">DMS Channel</a>
+  </div>
+</div>
+
+<footer>
+  <span data-ru="© 2026 L1nar — Сделано из кода и холодной стали"
+        data-en="© 2026 L1nar — Built with code and cold steel">
+    © 2026 L1nar — Сделано из кода и холодной стали
+  </span>
+</footer>
+
+<script>
+let currentLang = 'ru';
+
+function toggleLang() {
+  currentLang = currentLang === 'ru' ? 'en' : 'ru';
+  const btn = document.getElementById('langBtn');
+  btn.textContent = currentLang === 'ru' ? 'EN' : 'RU';
+
+  document.querySelectorAll('[data-ru]').forEach(el => {
+    const text = el.getAttribute('data-' + currentLang);
+    if (text) el.innerHTML = text;
+  });
+
+  document.documentElement.lang = currentLang;
+}
+</script>
+</body>
+</html>
